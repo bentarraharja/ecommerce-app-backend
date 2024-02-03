@@ -1,0 +1,1324 @@
+openapi: '3.0.3'
+info:
+  description: |
+    Ini Adalah Dokumentasi E-commerce App API
+  version: "1.0.0"
+  title: E-commerce App
+  contact:
+    email: l3nteam@gmail.com
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: Local Server
+    url: 'http://localhost:8000'
+  - description: Swagger Server
+    url:  https://virtserver.swaggerhub.com/L3NONEONE_1/EcommerceAppProject/1.0.0
+  - description: Deploy Server
+    url: 'http://l3n.my.id'
+tags:
+  - name: Auth
+    description: API AUTH
+  - name: User
+    description: API USER
+  - name: Product
+    description: API PRODUCT
+  - name: Cart
+    description: API CART
+  - name: Order
+    description: API ORDER
+  - name: Admin
+    description: API ADMIN
+paths:
+  /login:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: lendra@gmail.com
+                password:
+                  type: string
+                  example: lendra123
+      responses:
+        '200':
+          description: successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: success login
+                  name:
+                    type: string
+                    example: arja
+                  role:
+                    type: string
+                    example: user
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpM
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '404':
+          description: User Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+  /users:
+    post:
+      tags:
+        - User
+      summary: Create user
+      description: This can only be done by the logged in user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsersSchema'
+        description: Created user object (role otomatis diisi dari backend)
+        required: true
+      responses:
+        '200':
+          description: successful createUser
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Error createUser
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+    get:
+      tags:
+        - User
+      summary: Get user profil
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProfil'
+        '400':
+          description: Invalid userid supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+    put:
+      tags:
+        - User
+      summary: Updated user
+      description: This can only be done by the logged in user.
+      security:
+        - jwtAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EditProfil'
+        description: Updated user object
+        required: true
+      responses:
+        '200':
+          description: succes update user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Invalid userid supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+    delete:
+      tags:
+        - User
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: succes delete user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Invalid userid supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+
+
+
+  /users/products:
+    get:
+      tags:
+        - Product
+      summary: Get My Product
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: successful Get Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Error Get Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+  /products:
+    post:
+      tags:
+        - Product
+      summary: Create Product
+      description: This can only be done by the logged in user.
+      security:
+        - jwtAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductSchema'
+      responses:
+        '200':
+          description: successful Create Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Error Create Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+    get:
+      tags:
+        - Product
+      summary: Get All Product 
+      parameters:
+        - name: page
+          in: query
+          description: Nomor halaman yang diminta
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Jumlah produk per halaman
+          required: false
+          schema:
+            type: integer
+            default: 8
+      responses:
+        '200':
+          description: successful Get All Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductGetAllResponse'
+        '400':
+          description: Error Get Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+  /products/{id}:
+    get:
+      tags:
+        - Product
+      summary: Get Product By Id
+      description: This can only be done by the logged in user.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+            example: 1
+          required: true
+      responses:
+        '200':
+          description: successful Get Product By Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Error Get Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+    put:
+      tags:
+        - Product
+      summary: Update Product By Id
+      description: This can only be done by the logged in user.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+            example: 1
+          required: true
+      security:
+        - jwtAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductSchema'
+      responses:
+        '200':
+          description: successful Update Product By Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Error Update Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+    delete:
+      tags:
+        - Product
+      summary: Delete Product By Id
+      description: This can only be done by the logged in user.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+            example: 1
+          required: true
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: successful Delete Product By Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Error Delete Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+  /products/search:
+    get:
+      tags:
+        - Product
+      summary: Search Product
+      parameters:
+        - name: search
+          in: query
+          description: Query string untuk pencarian
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Hasil pencarian ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductGetAllResponse'
+        '400':
+          description: Error Get Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '404':
+          description: Hasil pencarian tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+  /carts:
+    get:
+      tags:
+        - Cart
+      summary: Get Cart
+      description: This can only be done by the logged in user.
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: successful Get Cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartResponse'
+        '400':
+          description: Error Get Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+  /carts/{product_id}:
+    post:
+      tags:
+        - Cart
+      summary: Add Product To Cart
+      description: This can only be done by the logged in user.
+      parameters:
+        - in: path
+          name: product_id
+          schema:
+            type: number
+            example: 1
+          required: true
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: successful add product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Error Add Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+  /carts/{cart_id}:
+    put:
+      tags:
+        - Cart
+      summary: Update Product To Cart
+      description: This can only be done by the logged in user.
+      security:
+        - jwtAuth: []
+      parameters:
+        - in: path
+          name: cart_id
+          schema:
+            type: number
+            example: 1
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  example: 5
+      responses:
+        '200':
+          description: successful Update product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Error puT Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+    delete:
+      tags:
+        - Cart
+      summary: Delete Product To Cart
+      description: This can only be done by the logged in user.
+      parameters:
+        - in: path
+          name: cart_id
+          schema:
+            type: number
+            example: 1
+          required: true
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: successful Delete product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Error Add Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+
+  /orders:
+    post:
+      tags:
+        - Order
+      summary: Create Order
+      description: This can only be done by the logged in user.
+      security:
+        - jwtAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderSchema'
+      responses:
+        '200':
+          description: successful create Order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Error create Order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+  /users/orders:
+    get:
+      tags:
+        - Order
+      summary: Get My Order
+      description: This can only be done by the logged in user.
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: get order by id user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+        '400':
+          description: Error Get Order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+  /orders/{id}:
+    put:
+      tags:
+        - Order
+      summary: cancel order by Id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            example: "dkjg-dhjd-djbf-djsb"
+          required: true
+      security:
+        - jwtAuth: []
+      responses:
+        "200":
+          description: Success cancel order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Response200"
+        '400':
+          description: Error cancel order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+        '404':
+          description: Product Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response404'
+  /admin/users:
+    get:
+      tags:
+        - Admin
+      summary: Get User
+      description: This can only be done by the logged in user.
+      parameters:
+        - name: page
+          in: query
+          description: Nomor halaman yang diminta
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Jumlah produk per halaman
+          required: false
+          schema:
+            type: integer
+            default: 10
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: get all User 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUserResponse'
+                # $ref: '#/components/schemas/ArrayOfCartSchema'
+        '400':
+          description: Error Get User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+  /admin/orders:
+    get:
+      tags:
+        - Admin
+      summary: Get All Order
+      description: This can only be done by the logged in user.
+      parameters:
+        - name: page
+          in: query
+          description: Nomor halaman yang diminta
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Jumlah produk per halaman
+          required: false
+          schema:
+            type: integer
+            default: 10
+      security:
+        - jwtAuth: []
+      responses:
+        '200':
+          description: success get all order 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/AdminOrderResponse'
+        '400':
+          description: Error Get Order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response400'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response500'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response401'
+
+components:
+  schemas:
+
+    Response200:
+            type: object
+            properties:
+              code:
+                type: number
+                example: 200
+              message:
+                type: string
+                example: Successful Operation
+            required:
+              - code
+              - message
+    Response400:
+            type: object
+            properties:
+              code:
+                type: number
+                example: 400
+              message:
+                type: string
+                example: "Bad Request"
+            required:
+              - code
+              - message
+    Response404:
+            type: object
+            properties:
+              code:
+                type: number
+                example: 404
+              message:
+                type: string
+                example: Not Found
+            required:
+              - code
+              - message
+    Response500:
+            type: object
+            properties:
+              code:
+                type: number
+                example: 500
+              message:
+                type: string
+                example: Internal Server Error
+            required:
+              - code
+              - message
+    Response401:
+            type: object
+            properties:
+              code:
+                type: number
+                example: 401
+              message:
+                type: string
+                example: Unauthorized
+            required:
+              - code
+              - message
+    UsersSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        user_name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+      example:
+        name: "lendra syaputra"
+        user_name: "lendra"
+        email: "lendra@gmail.com"
+        password: "lendra123"
+        role: "user"
+    GetProfil:
+      type: object
+      properties:
+        name:
+          type: string
+        user_name:
+          type: string
+        email:
+          type: string
+        photo_profil:
+          type: string
+          format: uri
+          description: URL of the product photo
+      example:
+        name: "lendra syaputra"
+        user_name: "lendra"
+        email: "lendra@gmail.com"
+        photo_profil: 'https://sariroti.com/arjauser.jpg'
+    EditProfil:
+      type: object
+      properties:
+        name:
+          type: string
+        user_name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        photo_profil:
+          type: string
+          format: uri
+          description: URL of the product photo
+      example:
+        name: "lendra syaputra"
+        user_name: "lendra"
+        email: "lendra@gmail.com"
+        password: "lendra432"
+        photo_profil: https://sariroti.com/arjauser.jpg'
+    ProductSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: integer
+        category:
+          type: string
+        stock:
+          type: integer
+        photo_product:
+          type: string
+          format: uri
+          description: URL of the product photo
+      example:
+        name: "Vivo"
+        description: "VIVO Y12"
+        price: 50000
+        category: "Smartphone"
+        stock: 10
+        photo_product: 'https://sariroti.com/smartphone/photovivo.jpg'
+    ProductResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: integer
+        category:
+          type: string
+        stock:
+          type: integer
+        photo_product:
+          type: string
+          format: uri
+          description: URL of the product photo
+        users: 
+          type: array
+          items:
+            $ref: '#/components/schemas/UsersSchema'
+      example:
+        id: 1
+        name: "Vivo"
+        description: "VIVO Y12"
+        price: 50000
+        category: "Smartphone"
+        stock: 10
+        photo_product: 'https://sariroti.com/smartphone/photovivo.jpg'
+        users: 
+          id: 1
+          name: "TOKO ARJA"
+          user_name: "@tokoarja"
+          photo_profil: 'https://sariroti.com/arjauser.jpg'
+    ProductGetAllResponse:
+      properties:
+        message:
+          type: string
+          example: "Succes Read Data"
+        total_page:
+          type: integer
+          example: 3
+        data:
+            type: object
+            properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                price:
+                  type: integer
+                stock:
+                  type: integer
+                category:
+                  type: string
+                photo_product:
+                  type: string
+                  format: uri
+                  description: URL of the product photo
+            example:
+            - id: 1
+              name: "Vivo"
+              price: 50000
+              stock: 12
+              category: phone
+              photo_product: 'https://sariroti.com/smartphone/photovivo.jpg'
+            - id: 2
+              name: "Samsung"
+              price: 60000
+              stock: 5
+              category: phone
+              photo_product: 'https://sariroti.com/smartphone/photosamsung.jpg'
+            - id: 3
+              name: "Xiaomi"
+              price: 55000
+              stock: 10
+              category: phone
+              photo_product: 'https://sariroti.com/smartphone/photoxiaomi.jpg'
+    CartResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          product:
+            $ref: '#/components/schemas/ProductResponse'
+          quantity:
+            type: integer
+      example:
+        - product:
+            id: 1
+            name: "Samsung"
+            stock: 9
+            price: 60000
+            photo_product: 'https://sariroti.com/smartphone/photosamsung.jpg'
+          cart_id: 2
+          quantity: 2
+        - product:
+            id: 2
+            name: "vivo"
+            stock: 10
+            price: 60000
+            photo_product: 'https://sariroti.com/smartphone/photosamsung.jpg'
+          cart_id: 1
+          quantity: 3
+    AdminUserResponse:
+      properties:
+        message:
+          type: string
+          example: "Succes Read Data"
+        total_page:
+          type: integer
+          example: 3
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              name:
+                type: string
+                example: "Mamang Es"
+              username:
+                type: string
+                example: "mangmang22"
+              email:
+                type: string
+                format: email
+                example: "lele@gmail.com"
+              status:
+                type: string
+                example: "active"
+              createdAt:
+                type: string
+                format: date-time
+                example: "2024-01-13T18:22:55Z"
+
+    AdminOrderResponse:
+      properties:
+        message:
+          type: string
+          example: "Succes Read Data"
+        total_page:
+          type: integer
+          example: 3
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "dkjg-dhjd-djbf-djsb"
+              productName:
+                type: string
+                example: "Vivo Y12"
+              quantity:
+                type: integer
+                example: 2
+              createdAt:
+                type: string
+                format: date-time
+                example: "2024-01-13T18:22:55Z"
+              bank:
+                type: string
+                example: "bca"
+              price:
+                type: integer
+                example: 1500000
+              gross_amount:
+                type: number
+                format: float
+                example: 3000000
+              address:
+                type: string
+                example: "Jalan Merdeka No.123, Jakarta"
+              status:
+                type: string
+                enum: [proses, selesai, dibatalkan]
+                example: "pending"
+    GetOrderSchema:
+      type: object
+      properties:
+        id:
+          type: integer
+        status:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                $ref: '#/components/schemas/CartResponse'
+              quantity:
+                type: integer
+      example:
+        id: "UID123"
+        status: "pending"
+        va_number: "03219402104i21"
+        bank: "bca"
+        gross_amount: 12000
+        data:
+          - product:
+              id: 1
+              name: "Samsung"
+              price: 60000
+              photo_product: 'https://sariroti.com/smartphone/photosamsung.jpg'
+            quantity: 2
+          - product:
+              id: 2
+              name: "vivo"
+              price: 60000
+              photo_product: 'https://sariroti.com/smartphone/photosamsung.jpg'
+            quantity: 3
+    OrderSchema:
+      type: object
+      properties:
+        cart_id:
+          type: integer
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                $ref: '#/components/schemas/ProductResponse'
+              quantity:
+                type: integer
+        address:
+          properties:
+            name:
+              type: string
+        payment:
+          type: object
+          properties:
+            name:
+              type: string
+      example:
+        cart_id: [1,2]
+        address: "Jalan Veteran No.10"
+        bank: "bca"
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
